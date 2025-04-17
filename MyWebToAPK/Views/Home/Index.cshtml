@@ -1,0 +1,84 @@
+﻿@{
+    ViewData["Title"] = "APK Generator";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>@ViewData["Title"]</title>
+    <!-- Link to Bootstrap CSS if needed -->
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+
+    <style>
+        /* Full-page background using the Razor helper for the image path */
+        body {
+            background-image: url('@Url.Content("~/images/background.jpg")');
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            /* Fallback background color, if image fails */
+            background-color: #512BD4;
+            margin: 0;
+            padding: 0;
+        }
+
+        .content-container {
+            background-color: rgba(255, 255, 255, 0.85);
+            padding: 2rem;
+            margin-top: 2rem;
+            border-radius: 8px;
+        }
+
+        /* Simple class to keep the logo above the form, aligned top-left */
+        .logo-wrapper {
+            text-align: left;
+            margin-bottom: 1rem;
+        }
+
+            /* Optional: if you want the logo to float left so the heading sits next to it */
+            .logo-wrapper img {
+                float: left;
+                max-height: 60px;
+                margin-right: 1rem;
+            }
+
+        /* Clear the float so the form starts below the logo/heading */
+        .clear-float {
+            clear: both;
+        }
+    </style>
+</head>
+<body>
+    <div class="container content-container">
+        <!-- Logo on the top-left -->
+        <div class="logo-wrapper">
+            <img src="@Url.Content("~/images/HIT_LOGO_RED_circle.png")" alt="HIT Logo" />
+            <h2 style="margin-top:0;">Generate a Custom APK</h2>
+        </div>
+
+        <!-- Clears float from the logo so the form goes below -->
+        <div class="clear-float"></div>
+
+        <form asp-action="GenerateAPK" method="post" class="mt-4">
+            <div class="mb-3">
+                <label for="url" class="form-label">Website URL:</label>
+                <input type="url" id="url" name="url" class="form-control w-75" placeholder="https://example.com" required />
+            </div>
+            <div class="mb-3">
+                <label for="apkName" class="form-label">APK File Name:</label>
+                <input type="text" id="apkName" name="apkName" class="form-control w-75" placeholder="filename.apk" required />
+            </div>
+            <button type="submit" class="btn btn-primary w-75" style="margin-top:20px;">Generate APK</button>
+        </form>
+
+        @if (ViewBag.Message != null)
+        {
+            <div class="alert alert-warning mt-3">
+                <p>@ViewBag.Message</p>
+            </div>
+        }
+    </div>
+</body>
+</html>
