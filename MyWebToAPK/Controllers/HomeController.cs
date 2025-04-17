@@ -5,11 +5,15 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using MyWebToAPK.Helpers;
+using Microsoft.Extensions.Logging;
+using Serilog.Core;
+using Serilog;
 
 namespace MyWebToAPK.Controllers
 {
     public class HomeController : Controller
     {
+        private readonly ILogger<HomeController> _logger;
         // The base APK is located in wwwroot.
         private readonly string _baseApkPath;
         // The output folder where temporary builds will be stored.
@@ -17,9 +21,10 @@ namespace MyWebToAPK.Controllers
         private readonly IWebHostEnvironment _env;
 
         // IWebHostEnvironment is injected to gain access to the web root (wwwroot)
-        public HomeController(IWebHostEnvironment env)
+        public HomeController(IWebHostEnvironment env, ILogger<HomeController> logger)
         {
             _env = env;
+            _logger = logger;
             // Build the full path to the base APK in wwwroot.
             _baseApkPath = Path.Combine(_env.WebRootPath, "com.hit.MyMauiTemplateProject-Signed-aligned.apk");
         }
@@ -34,6 +39,27 @@ namespace MyWebToAPK.Controllers
         [HttpPost]
         public async Task<IActionResult> GenerateAPK(string url, string apkName)
         {
+            // Capture client IP
+            var ip = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown";
+
+
+            string clientIp =
+    Request.Headers.TryGetValue("X-Forwarded-For", out var xfwd)
+      ? xfwd.ToString().Split(',')[0]
+      : HttpContext.Connection.RemoteIpAddress?.ToString();
+
+            Log.Information("GenerateAPK called from {ClientIP}: url={Url}, filename={FileName}",
+                            clientIp, url, apkName);
+
+
+
+
+
+            _logger.LogInformation(
+         "GenerateAPK called from {IP} → URL={Url}, FileName={ApkName}",
+         ip, url, apkName);
+
+
             if (string.IsNullOrWhiteSpace(url))
             {
                 ViewBag.Message = "URL is required.";
